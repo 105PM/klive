@@ -13,7 +13,7 @@ import platform
 
 # third-party
 import requests
-from flask import Blueprint, request, Response, send_file, render_template, redirect, jsonify, session, send_from_directory, stream_with_context
+from flask import Blueprint, request, Response, send_file, render_template, redirect, jsonify, session, send_from_directory, stream_with_context, abort
 from flask_socketio import SocketIO, emit, send
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -371,6 +371,9 @@ def normal(sub):
 def proxy(sub):
     logger.debug('proxy %s %s', package_name, sub)
     try:
+        if ModelSetting.get_bool('use_plex_proxy') == False:
+            abort(403)
+            return
         if sub == 'discover.json':
             ddns = SystemModelSetting.get('ddns')
             data = {"FriendlyName":"HDHomeRun CONNECT","ModelNumber":"HDHR4-2US","FirmwareName":"hdhomerun4_atsc","FirmwareVersion":"20190621","DeviceID":"104E8010","DeviceAuth":"UF4CFfWQh05c3jROcArmAZaf","BaseURL":"%s/klive/proxy" % ddns,"LineupURL":"%s/klive/proxy/lineup.json" % ddns,"TunerCount":20}

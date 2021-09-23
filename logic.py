@@ -86,8 +86,9 @@ class Logic(object):
         'use_kbs' : 'False',
         'use_mbc' : 'False',
         'use_sbs' : 'False',
-
+        'use_plex_proxy' : 'False',
     }
+    
 
     @staticmethod
     def db_init():

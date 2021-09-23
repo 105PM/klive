@@ -113,7 +113,10 @@
       {{ macros.info_text_go('api_m3utvh', 'M3U for Tvheadend', value=arg['api_m3utvh'], desc=['Tvheadend 채널 등록시 사용하는 M3U']) }}
       {{ macros.info_text_go('xmltv', 'XMLTV', value=arg['xmltv'], desc=['일반 EPG']) }}
       {{ macros.info_text_go('api_m3uall', 'M3U (All)', value=arg['api_m3uall']) }}
-      {{ macros.info_text_go('plex_proxy', 'Plex Proxy', value=arg['plex_proxy']) }}
+      {{ macros.setting_checkbox('use_plex_proxy', 'Plex Proxy API 사용', value=arg['use_plex_proxy'], desc=['On: Plex Proxy API 사용.', '/klive/proxy/lineup.json 주소를 통한 apikey 노출 됨.']) }}
+      <div id="use_plex_proxy_div" class="collapse">
+        {{ macros.info_text_go('plex_proxy', 'Plex Proxy', value=arg['plex_proxy']) }}
+      </div>
       <!--
       {{ macros.m_hr() }}
       {{ macros.info_text_go('wavve_vod', '웨이브 최신 VOD m3u', value=arg['wavve_vod']) }}
@@ -141,6 +144,7 @@ $(document).ready(function(){
   use_collapse("use_navertv")
   use_collapse("use_kakaotv")
   use_collapse("use_fix_url")
+  use_collapse("use_plex_proxy");
 });
 
 $('#use_wavve').change(function() {use_collapse('use_wavve');});
@@ -152,6 +156,7 @@ $('#use_youtubedl').change(function() {use_collapse('use_youtubedl');});
 $('#use_navertv').change(function() {use_collapse('use_navertv');});
 $('#use_kakaotv').change(function() {use_collapse('use_kakaotv');});
 $('#use_fix_url').change(function() {use_collapse('use_fix_url');});
+$('#use_plex_proxy').change(function() {use_collapse('use_plex_proxy');});
 
 $("body").on('click', '#youtubedl_install_btn', function(e){
   e.preventDefault();
