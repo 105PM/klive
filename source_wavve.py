@@ -60,6 +60,9 @@ class SourceWavve(SourceBase):
             surl = None
             if data is not None:
                 surl = data['playurl']
+                # 2022-01-10 라디오. 대충 함
+                if data['quality'] == '100p' or data['qualities']['list'][0]['name'] == '오디오모드':
+                    surl = data['playurl'].replace('/100/100', '/100') + f"/live.m3u8{data['debug']['orgurl'].split('.m3u8')[1]}"
             if surl is None:
                 raise Exception('no url')
 
@@ -77,7 +80,6 @@ class SourceWavve(SourceBase):
             proxy = Wavve.get_proxy()
             proxies = Wavve.get_proxies()
             data = requests.get(url, proxies=proxies).text
-            #logger.debug(data)
             temp = url.split('live.m3u8')
             new_data = data.replace('live_', '%slive_' % temp[0])
             if mode == 'web_play':
