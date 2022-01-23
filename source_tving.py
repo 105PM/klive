@@ -12,14 +12,14 @@ import requests
 from flask import redirect
 
 # sjva 공용
-from framework import app, db, scheduler, path_app_root, path_data
+from framework import app, db, scheduler, path_app_root, path_data, SystemModelSetting
 
 # 패키지
 from .plugin import logger, package_name
 from .model import ModelSetting, ModelChannel
 from .source_base import SourceBase
 import framework.tving.api as Tving
-
+from support.base import d
 #########################################################
 
 
@@ -59,9 +59,20 @@ class SourceTving(SourceBase):
             c_id = source_id
             if source_id.startswith('V'):
                 c_id = source_id[1:]
-            
+
+            #return
             if Tving.is_drm_channel(source_id):
-                return Tving.get_stream_info_by_web('live', c_id, quality)
+                from support.site.tving import SupportTving
+                tmp = SystemModelSetting.get('site_tving_token').split('=')
+                if len(tmp) == 2:
+                    tmp = tmp[1]
+                support_tving = SupportTving(token=tmp, proxy=Tving.get_proxy())
+
+                data = support_tving.api_info(source_id, quality)
+                #logger.debug(d(data))
+                return data
+
+                #return Tving.get_stream_info_by_web('live', c_id, quality)
             else:
                 data, url = Tving.get_episode_json(c_id, quality, is_live=True)
 
