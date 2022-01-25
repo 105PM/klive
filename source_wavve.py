@@ -21,7 +21,7 @@ from .plugin import logger, package_name
 from .model import ModelSetting, ModelChannel
 from .source_base import SourceBase
 import framework.wavve.api as Wavve
-
+from support.base import d
 #########################################################
 
 
@@ -58,14 +58,15 @@ class SourceWavve(SourceBase):
         try:
             data = Wavve.streaming('live', source_id, quality)
             surl = None
-            if data is not None:
+            if data is not None and 'playurl' in data:
                 surl = data['playurl']
                 # 2022-01-10 라디오. 대충 함
-                if data['quality'] == '100p' or data['qualities']['list'][0]['name'] == '오디오모드':
-                    surl = data['playurl'].replace('/100/100', '/100') + f"/live.m3u8{data['debug']['orgurl'].split('.m3u8')[1]}"
+                #if data['quality'] == '100p' or data['qualities']['list'][0]['name'] == '오디오모드':
+                #    surl = data['playurl'].replace('/100/100', '/100') + f"/live.m3u8{data['debug']['orgurl'].split('.m3u8')[1]}"
             if surl is None:
+                logger.debug(d(data))
+                logger.info(f"CH : {source_id}")
                 raise Exception('no url')
-
             if ModelSetting.get('wavve_streaming_type') == '2':
                 return 'redirect', surl
             return 'return_after_read', surl
