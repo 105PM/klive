@@ -303,8 +303,8 @@ class LogicKlive(object):
                     else:
                         mc.number = int(number)
                     if mc.source == 'tving':
-                        import framework.tving.api as Tving
-                        mc.is_drm_channel = Tving.is_drm_channel(mc.source_id)
+                        from support.site.tving import SupportTving
+                        mc.is_drm_channel = SupportTving.ins.is_drm_channel(mc.source_id)
                     if mc.source == 'seezn':
                         # Seezn DRM 채널 추가 시 수정 필요
                         mc.is_drm_channel = (mc.source_id in ['801'])
