@@ -37,7 +37,7 @@ class SourceTving(SourceBase):
             if SupportTving.ins.is_drm_channel(source_id):
                 return data
             else:
-                return 'return_after_read', data['play_info']['url']
+                return 'return_after_read', data['url']
         except Exception as e:
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
