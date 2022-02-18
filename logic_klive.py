@@ -367,7 +367,8 @@ class LogicKlive(object):
     @staticmethod
     def reset_epg_time():
         try:
-            import epg
+            import epg2
+            epg2.Logic.get_module('user').task_interface('klive', 'manual')
             #epg.LogicNormal.make_xml(package_name)
         except Exception as e: 
             #logger.error('Exception:%s', e)
