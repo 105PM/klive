@@ -80,7 +80,7 @@ class ModelCustom(db.Model):
     source = db.Column(db.String)
     source_id = db.Column(db.String)
     epg_id = db.Column(db.Integer) # 이건 단순히 sort만을 위한거다. 
-    epg_name = db.Column(db.String, db.ForeignKey('epg_channel.name'))
+    epg_name = db.Column(db.String, db.ForeignKey('epg2_channel.name'))
     #epg_name = db.Column(db.String)
     #epg_name2 = db.Column(db.String, db.ForeignKey('epg_channel.name'))
     #epg_entity = db.relationship('ModelEpgMakerChannel', lazy=True)
