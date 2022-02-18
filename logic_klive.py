@@ -143,12 +143,11 @@ class LogicKlive(object):
                 if arg['use_tving'] == 'True' and x.tving_id != '' and (arg['tving_include_drm'] == 'True' or (arg['tving_include_drm']=='True' and 'OCN' not in x.tving_name)):
                     tmp.append(x)
                 if arg['use_seezn'] == 'True' and x.seezn_id != '':
-                    if 'OCN' == x.seezn_name:
-                        if arg['seezn_include_drm']=='True':
-                            tmp.append(x)
-                    if x.seezn_name in ['VIKI', '미드나잇 채널', '플레이보이 TV', '허니TV']:
-                        if arg['seezn_adult']=='True':
-                            tmp.append(x)
+                    if 'OCN' == x.seezn_name and arg['seezn_include_drm']!='True':
+                        continue
+                    if x.seezn_name in ['VIKI', '미드나잇 채널', '플레이보이 TV', '허니TV'] and arg['seezn_adult']!='True':
+                        continue    
+                    tmp.append(x)
                         
             
             # 이 목록에 없는 방송은 넣는다.. 스포츠, 라디오?
