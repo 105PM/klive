@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os
+import os, time
 import sys
 import logging
 import traceback
@@ -19,25 +19,36 @@ import threading
 from .plugin import logger, package_name
 from .model import ModelSetting, ModelChannel
 from .source_base import SourceBase
+from support.base import d, default_headers
 
 #########################################################
 
 class SourceMBC(SourceBase):
-    ch_list = [
-        '1|무한도전24|http://vodmall.imbc.com/util/player/onairurlutil_mudo.ashx?type=m|Y',
-        '2|MBC 표준FM|sfm|N',
-        '3|MBC FM4U|mfm|N',
-        '4|MBC 올댓뮤직|chm|N',
-    ]
+    code = {
+        'MBC' : '0',
+        'P_everyone' : '2',
+        'P_drama' : '1',
+        'P_music' : '3',
+        'P_on' : '6',
+        'P_allthekpop' : '4',
+        'FM' : 'sfm',
+        'FM4U' : 'mfm',
+        'ALLTHAT' : 'chm',
+    }
 
     @classmethod
     def get_channel_list(cls):
         try:
             ret = []
-            for item in SourceMBC.ch_list:
-                tmp = item.split('|')
-                c = ModelChannel(cls.source_name, tmp[0], tmp[1], None, True if tmp[3]=='Y' else False)
-                ret.append(c)
+            url = 'https://control.imbc.com/Schedule/PCONAIR'
+            data = requests.get(url, headers=default_headers).json()
+            for cate in ['TVList', 'RadioList']:
+                for item in data[cate]:
+                    if item['ScheduleCode'] not in cls.code:
+                        continue
+                    c = ModelChannel(cls.source_name, cls.code[item['ScheduleCode']], item['TypeTitle'], None, True if cate=='TVList' else False)
+                    c.current = item['Title']
+                    ret.append(c)
             return ret
         except Exception as e:
             logger.error('Exception:%s', e)
@@ -47,18 +58,27 @@ class SourceMBC(SourceBase):
     @classmethod
     def get_url(cls, source_id, quality, mode):
         try:
-            for item in SourceMBC.ch_list:
-                tmp = item.split('|')
-                if tmp[0] == source_id:
-                    if tmp[3] == 'Y':
-                        url = tmp[2]
-                    else:
-                        url = 'http://miniplay.imbc.com/AACLiveURL.ashx?protocol=M3U8&channel=%s&agent=android&androidVersion=24' % tmp[2]
-                    break
-            url = requests.get(url).text.strip()
-            if mode == 'web_play':
-                return 'return_after_read', url
-            return 'redirect', url
+            headers = {
+                'Host': 'mediaapi.imbc.com',
+                'Origin': 'https://onair.imbc.com',
+                'Referer': 'https://onair.imbc.com/',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36',
+            }
+            if len(source_id) == 3:
+                url = f'https://sminiplay.imbc.com/aacplay.ashx?channel={source_id}&protocol=M3U8&agent=webapp'
+                #logger.debug(url)
+                data = requests.get(url).text
+                data = data.replace('playlist', 'chunklist')
+                #logger.debug(data)
+                return 'redirect', data
+            elif source_id != '0':
+                url = f'https://mediaapi.imbc.com/Player/OnAirPlusURLUtil?ch={source_id}&type=PC&t={int(time.time())}'
+            else:
+                url = f'https://mediaapi.imbc.com/Player/OnAirURLUtil?type=PC&t={int(time.time())}'
+            data = requests.get(url, headers=headers, verify=False).json()
+            url = data['MediaInfo']['MediaURL'].replace('playlist', 'chunklist')
+            return 'return_after_read', url
+
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
@@ -67,10 +87,12 @@ class SourceMBC(SourceBase):
     @classmethod
     def get_return_data(cls, source_id, url, mode):
         try:
-            data = requests.get(url).text
-            return cls.change_redirect_data(data)
+            data = requests.get(url, headers=default_headers).text
+            #data = cls.change_redirect_data(data)
+            tmp = url.split('chunklist')
+            data = data.replace('media', tmp[0] + 'media')
+            return data
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
         return data
-

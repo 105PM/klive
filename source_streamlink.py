@@ -93,7 +93,7 @@ class SourceStreamlink(SourceBase):
     @classmethod
     def get_url(cls, source_id, quality, mode):
         try:
-            logger.debug('source_id:%s, quality:%s, mode:%s', source_id, quality, mode)
+            #logger.debug('source_id:%s, quality:%s, mode:%s', source_id, quality, mode)
             """
             import streamlink
             data = streamlink.streams(StreamlinkItem.ch_list[source_id].url)

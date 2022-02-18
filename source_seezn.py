@@ -27,42 +27,37 @@ from .source_base import SourceBase
 
 class SourceSeezn(SourceBase):
     default_header = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
-                'Host': 'api.seezntv.com',
-                'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-                'sec-ch-ua-mobile': '?0',
-                'HTTP_CLIENT_IP': 'undefined',
-                'X-APP-VERSION': '92.0.4515.131',
-                'X-OS-VERSION': 'NT 10.0',
-                'X-OS-TYPE': 'Windows',
-                'X-DEVICE-MODEL': 'Chrome',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Headers': 'Authentication',
-                'Origin': 'https://www.seezntv.com',
-                'Sec-Fetch-Site': 'same-site',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Dest': 'empty',
-                'Referer': 'https://www.seezntv.com/'
-            }
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
+        'Host': 'api.seezntv.com',
+        'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
+        'sec-ch-ua-mobile': '?0',
+        'HTTP_CLIENT_IP': 'undefined',
+        'X-APP-VERSION': '92.0.4515.131',
+        'X-OS-VERSION': 'NT 10.0',
+        'X-OS-TYPE': 'Windows',
+        'X-DEVICE-MODEL': 'Chrome',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Headers': 'Authentication',
+        'Origin': 'https://www.seezntv.com',
+        'Sec-Fetch-Site': 'same-site',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'Referer': 'https://www.seezntv.com/'
+    }
 
     default_header2 = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
-                'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
-                'sec-ch-ua-mobile': '?0',
-                'Accept': '*/*',
-                'Origin': 'https://www.seezntv.com',
-                'Sec-Fetch-Site': 'same-site',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Dest': 'empty',
-                'Referer': 'https://www.seezntv.com/'
-            }
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
+        'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
+        'sec-ch-ua-mobile': '?0',
+        'Accept': '*/*',
+        'Origin': 'https://www.seezntv.com',
+        'Sec-Fetch-Site': 'same-site',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'Referer': 'https://www.seezntv.com/'
+    }
 
     ch_quality = dict()
-
-    
-    @classmethod
-    def prepare(cls, source_id, source_pw, arg):
-        pass
 
 
     @classmethod
@@ -78,6 +73,7 @@ class SourceSeezn(SourceBase):
             for item in data['data']['list'][0]['list_channel']:
                 # 성인 채널 여부
                 if item['adult_yn'] == 'Y' and ModelSetting.get('seezn_adult') == 'False':
+                    #logger.info(item['service_ch_name'])
                     continue
                 # bitrate_info
                 cls.ch_quality[item['ch_no']] = item['bit_rate_info'].split(',')
@@ -85,6 +81,7 @@ class SourceSeezn(SourceBase):
                 c = ModelChannel(cls.source_name, item['ch_no'], item['service_ch_name'], item['ch_image_list'], (item['type']!='AUDIO_MUSIC'))
                 # DRM 채널 여부
                 if item['cj_drm_yn'] == 'Y':
+                    #logger.error(item['service_ch_name'])
                     c.is_drm_channel = True
                     if ModelSetting.get('seezn_include_drm') == 'False':
                         continue
@@ -116,7 +113,7 @@ class SourceSeezn(SourceBase):
             # 로그인 정보 없을시 epg_prepaly로, 3~4분 가량 재생됨
             pre = ''
             if len(ModelSetting.get('seezn_cookie')) < 1:
-                logger.debug('no valid cookie')
+                #logger.debug('no valid cookie')
                 pre = 'pre'
             else:
                 header['x-omas-response-cookie'] = ModelSetting.get('seezn_cookie')
@@ -140,7 +137,10 @@ class SourceSeezn(SourceBase):
             else:
                 # 재생권한 없음, 해외 IP 등등
                 raise Exception(ch_info['meta'])
-
+            
+            #logger.error(url)
+            if ModelSetting.get_bool('seezn_use_redirect') == False:
+                return 'return_after_read', url
             if mode == 'web_play':
                 return 'return_after_read', url
             

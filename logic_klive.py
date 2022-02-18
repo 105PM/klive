@@ -32,8 +32,6 @@ from .model import ModelSetting, ModelChannel, ModelCustom
 from .source_wavve import SourceWavve
 from .source_tving import SourceTving
 from .source_seezn import SourceSeezn
-from .source_videoportal import SourceVideoportal
-from .source_everyon import SourceEveryon
 from .source_streamlink import SourceStreamlink
 from .source_youtubedl import SourceYoutubedl
 from .source_navertv import SourceNavertv
@@ -49,6 +47,9 @@ M3U_RADIO_FORMAT = '#EXTINF:-1 tvg-id=\"%s\" tvg-name=\"%s\" tvg-logo=\"%s\" gro
 
 
 #########################################################
+
+cate_change = {'wavve':'웨이브', 'tving':'티빙', 'seezn':'시즌', 'youtubedl':'YoutubeDL', 'streamlink':'StreamLink', 'navertv':'네이버TV', 'kakaotv':'카카오TV', 'fix_url':'고정주소', 'kbs':'KBS', 'sbs':'SBS', 'mbc':'MBC'}
+
 
 class LogicKlive(object):
     source_list = None
@@ -75,8 +76,6 @@ class LogicKlive(object):
                 LogicKlive.source_list['wavve'] = SourceWavve('wavve', ModelSetting.get('wavve_id'), ModelSetting.get('wavve_pw'), None)
             if ModelSetting.get_bool('use_tving'):
                 LogicKlive.source_list['tving'] = SourceTving('tving', ModelSetting.get('tving_id'), ModelSetting.get('tving_pw'), '0')
-            if ModelSetting.get_bool('use_videoportal'):
-                LogicKlive.source_list['videoportal'] = SourceVideoportal('videoportal', None, None, None)
             if ModelSetting.get_bool('use_seezn'):
                 LogicKlive.source_list['seezn'] = SourceSeezn('seezn', None, None, None)
             #if ModelSetting.get_bool('use_everyon'):
@@ -130,17 +129,27 @@ class LogicKlive(object):
     @staticmethod
     def custom():
         try:
+            
             # 전체 EPG 목록 채널
-            import epg
-            total_channel_list = epg.ModelEpgMakerChannel.get_channel_list()
+            import epg2
+            total_channel_list = epg2.ModelEpg2Channel.get_list()
             logger.debug("custom epg channel list : %s", len(total_channel_list))
             tmp = []
             setting_list = db.session.query(ModelSetting).all()
             arg = Util.db_list_to_dict(setting_list)
             for x in total_channel_list:
-                #if (arg['use_wavve'] == 'True' and x.wavve_id is not None) or (arg['use_tving'] == 'True' and x.tving_id is not None) or (arg['use_videoportal'] == 'True' and x.videoportal_id is not None) or (arg['use_everyon'] == 'True' and x.everyon_id is not None):
-                if (arg['use_wavve'] == 'True' and x.wavve_id is not None) or (arg['use_tving'] == 'True' and x.tving_id is not None) or (arg['use_videoportal'] == 'True' and x.videoportal_id is not None) or (arg['use_seezn'] == 'True' and x.seezn_id is not None):
+                if (arg['use_wavve'] == 'True' and x.wavve_id != ''):
                     tmp.append(x)
+                if arg['use_tving'] == 'True' and x.tving_id != '' and (arg['tving_include_drm'] == 'True' or (arg['tving_include_drm']=='True' and 'OCN' not in x.tving_name)):
+                    tmp.append(x)
+                if arg['use_seezn'] == 'True' and x.seezn_id != '':
+                    if 'OCN' == x.seezn_name:
+                        if arg['seezn_include_drm']=='True':
+                            tmp.append(x)
+                    if x.seezn_name in ['VIKI', '미드나잇 채널', '플레이보이 TV', '허니TV']:
+                        if arg['seezn_adult']=='True':
+                            tmp.append(x)
+                        
             
             # 이 목록에 없는 방송은 넣는다.. 스포츠, 라디오?
             # 자동설정
@@ -153,7 +162,7 @@ class LogicKlive(object):
                 for t in tmp2:
                     #logger.debug(t)
                     try:
-                        if (ch.source == 'wavve' and ch.source_id == t['wavve_id']) or (ch.source == 'tving' and ch.source_id == t['tving_id']) or (ch.source == 'videoportal' and ch.source_id == t['videoportal_id']) or (ch.source == 'seezn' and ch.source_id == t['seezn_id']): #or (ch.source == 'everyon' and ch.source_id == t['everyon_id']):
+                        if (ch.source == 'wavve' and ch.source_id == t['wavve_id']) or (ch.source == 'tving' and ch.source_id == t['tving_id']) or (ch.source == 'seezn' and ch.source_id == t['seezn_id']): #or (ch.source == 'everyon' and ch.source_id == t['everyon_id']):
                             find = True
                             break
                     except:
@@ -166,11 +175,9 @@ class LogicKlive(object):
                     entity['name'] = ch.title
                     entity['wavve_name'] = entity['wavve_id'] = entity['wavve_number'] = None
                     entity['tving_name'] = entity['tving_id'] = entity['tving_number'] = None
-                    entity['videoportal_name'] = entity['videoportal_id'] = entity['videoportal_number'] = None
                     entity['seezn_name'] = entity['seezn_id'] = entity['seezn_number'] = None
-                    entity['everyon_name'] = entity['everyon_id'] = entity['everyon_number'] = None
 
-                    if ch.source in ['wavve', 'tving', 'videoportal', 'seezn']:#, 'everyon']:
+                    if ch.source in ['wavve', 'tving', 'seezn']:#, 'everyon']:
                         entity['%s_id' % ch.source] = ch.source_id
                         entity['%s_name' % ch.source] = ch.title
                         entity['category'] = ch.source
@@ -179,7 +186,7 @@ class LogicKlive(object):
                         entity['user_source_id'] = ch.source_id
                         entity['user_source_name'] = ch.title
                         entity['auto'] = 'user_source'
-                        entity['category'] = ch.source
+                        entity['category'] = cate_change[ch.source]
                     append_list.append(entity)
             logger.debug(u'추가 갯수:%s', len(append_list))
             logger.debug(u'EPG:%s', len(tmp2))
@@ -188,33 +195,24 @@ class LogicKlive(object):
             #return total_channel_list
             #tmp2 = [x.as_dict() for x in tmp]
 
-
             #logger.debug(tmp2)
             for x in tmp2:
-                if arg['use_wavve'] == 'True' and x['wavve_id'] is not None:
+                if arg['use_wavve'] == 'True' and x['wavve_id'] != '':
                     x['auto'] = 'wavve'
-                elif arg['use_tving'] == 'True' and x['tving_id'] is not None:
+                elif arg['use_tving'] == 'True' and x['tving_id'] != '':
                     x['auto'] = 'tving'
-                elif arg['use_videoportal'] == 'True' and x['videoportal_id'] is not None:
-                    x['auto'] = 'videoportal'
-                elif arg['use_seezn'] == 'True' and x['seezn_id'] is not None:
+                elif arg['use_seezn'] == 'True' and x['seezn_id'] != '':
                     x['auto'] = 'seezn'
-                #elif arg['use_everyon'] == 'True' and x['everyon_id'] is not None:
-                #    x['auto'] = 'everyon'
 
-                if x['wavve_id'] is not None:
+                if x['wavve_id'] != '':
                     entity = db.session.query(ModelCustom).filter(ModelCustom.source == 'wavve').filter(ModelCustom.source_id == x['wavve_id']).first()
                     if entity is not None:
                         x['wavve_number'] = entity.number
-                if x['tving_id'] is not None:
+                if x['tving_id'] != '':
                     entity = db.session.query(ModelCustom).filter(ModelCustom.source == 'tving').filter(ModelCustom.source_id == x['tving_id']).first()
                     if entity is not None:
                         x['tving_number'] = entity.number
-                if x['videoportal_id'] is not None:
-                    entity = db.session.query(ModelCustom).filter(ModelCustom.source == 'videoportal').filter(ModelCustom.source_id == x['videoportal_id']).first()
-                    if entity is not None:
-                        x['videoportal_number'] = entity.number
-                if x['seezn_id'] is not None:
+                if x['seezn_id'] != '':
                     entity = db.session.query(ModelCustom).filter(ModelCustom.source == 'seezn').filter(ModelCustom.source_id == x['seezn_id']).first()
                     if entity is not None:
                         x['seezn_number'] = entity.number
@@ -275,9 +273,9 @@ class LogicKlive(object):
                 if apikey is not None:
                     url += '&apikey=%s' % apikey
                 if c.is_tv:
-                    m3u += M3U_FORMAT % (c.source+'|' + c.source_id, c.title, c.icon, c.source, idx, idx, c.source + ' ' + c.title, url)
+                    m3u += M3U_FORMAT % (c.title, c.title, c.icon, cate_change[c.source], idx, idx, f"{c.title}", url)
                 else:
-                    m3u += M3U_RADIO_FORMAT % (c.source+'|'+c.source_id, c.title, c.icon, c.source, idx, idx, c.source + ' ' + c.title, url)
+                    m3u += M3U_RADIO_FORMAT % (c.title, c.title, c.icon, cate_change[c.source], idx, idx, f"{c.title}", url)
                 idx += 1
             return m3u
         except Exception as e: 
@@ -418,8 +416,9 @@ class LogicKlive(object):
                 if for_tvh:
                     url = 'pipe://%s -loglevel quiet -i "%s" -c copy -metadata service_provider=sjva_klive -metadata service_name="%s" -c:v copy -c:a aac -b:a 128k -f mpegts -tune zerolatency pipe:1' % ('ffmpeg', url, c.title)
 
-                import epg
-                ins = epg.ModelEpgMakerChannel.get_instance_by_name(c.epg_name)
+                import epg2
+                #ins = epg2.ModelEpg2Channel.get_by_name(c.epg_name)
+                ins = epg2.ModelEpg2Channel.get_by_prefer(c.epg_name)
                 icon = '' if ins is None else ins.icon
                 if icon is None:
                     icon = c.icon
@@ -458,8 +457,8 @@ class LogicKlive(object):
                     if apikey is not None:
                         play_info += '&apikey=%s' % apikey
 
-                import epg
-                ins = epg.ModelEpgMakerChannel.get_instance_by_name(c.epg_name)
+                import epg2
+                ins = epg2.ModelEpg2Channel.get_by_prefer(c.epg_name)
                 icon = '' if ins is None else ins.icon
                 if icon is None:
                     icon = c.icon

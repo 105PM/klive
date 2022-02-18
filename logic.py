@@ -58,34 +58,32 @@ class Logic(object):
         'seezn_adult': 'False',
         'seezn_use_proxy': 'False',
         'seezn_proxy_url': '',
-
-        'use_videoportal' : 'True',
-        'videoportal_adult' : 'False',
-
-        'use_everyon' : 'True',
+        'seezn_use_redirect': 'False',
 
         'use_youtubedl' : 'False',
         'youtubedl_use_proxy' : 'False',
         'youtubedl_proxy_url' : '',
-        'youtubedl_list' : u'1|한국프로야구1|https://twitch.tv/kbo1\n2|한국프로야구2|https://twitch.tv/kbo2\n3|한국프로야구3|https://twitch.tv/kbo3\n4|한국프로야구4|https://twitch.tv/kbo4\n5|한국프로야구5|https://twitch.tv/kbo5\n6|유투브 1|YOUTUBE_1\n7|유투브 2|YOUTUBE_2\n8|유투브 3|YOUTUBE_3\n9|유투브 11|YOUTUBE_11\n10|유투브 100|YOUTUBE_100\n11|YTN|https://youtube.com/watch?v=U_sYIKWhJvk\n12|연합뉴스TV|https://www.youtube.com/watch?v=oul5ldEUbHk\n13|THE K-POP|https://youtube.com/watch?v=0Cs_o3daYR8\n14|장군의 아들|https://youtube.com/watch?v=EidX2DPPSBw\n',
+        'youtubedl_list' : '1|YTN|https://www.youtube.com/watch?v=GoXPbGQl-uQ\n2|KBS NEWS D|https://www.youtube.com/watch?v=CISTtnHPntQ\n3|연합뉴스|https://www.youtube.com/watch?v=qfMAsVoh9mg',
 
         'use_streamlink' : 'False',
         'streamlink_quality' : 'best',
         'streamlink' : 'False',
-        'streamlink_list' : u'1|한국프로야구1|https://twitch.tv/kbo1\n2|한국프로야구2|https://twitch.tv/kbo2\n3|한국프로야구3|https://twitch.tv/kbo3\n4|한국프로야구4|https://twitch.tv/kbo4\n5|한국프로야구5|https://twitch.tv/kbo5\n6|2010년 히트곡|https://dailymotion.com/video/x77q22e',
+        'streamlink_list' : '1|LeekBeats Radio: 24/7 chill lofi beats - DMCA safe music|https://www.twitch.tv/leekbeats\n2|2010년 히트곡|https://dailymotion.com/video/x77q22e',
 
         'use_navertv' : 'False',
         'navertv_list' : u'1|스포츠 야구1|SPORTS_ad1|1080\n2|스포츠 야구2|SPORTS_ad2|1080\n3|스포츠 야구3|SPORTS_ad3|1080\n4|스포츠 야구4|SPORTS_ad4|1080\n5|스포츠 야구5|SPORTS_ad5|1080\n6|스포츠 Spocado|SPORTS_ch7|1080\n7|스포츠 sbsgolf|SPORTS_ch15|1080\n11|연합뉴스TV|https://tv.naver.com/l/44267\n12|TBS|https://tv.naver.com/l/43164|720\n',
 
         'use_kakaotv' : 'False',
-        'kakaotv_list' : u'1|KBS24|https://tv.kakao.com/channel/3193314/livelink/7742194\n2|추억의 90년대 가요|https://tv.kakao.com/channel/3112354/livelink/7836404',
+        'kakaotv_list' : '1|KBS24|https://tv.kakao.com/channel/3193314/livelink/11817131\n2|연합뉴스|https://tv.kakao.com/channel/2663786/livelink/11834144\n3|케이블TV VOD 라이브 - 최신 영화·드라마·예능|https://tv.kakao.com/channel/2876224/livelink/11682940',
 
         'use_fix_url' : 'False',
-        'fix_url_list' : u'1|TBS FM|http://tbs.hscdn.com/tbsradio/fm/playlist.m3u8|N\n2|TBS eFM|http://tbs.hscdn.com/tbsradio/efm/playlist.m3u8|N\n3|CBS 음악FM|http://aac.cbs.co.kr/cbs939/_definst_/cbs939.stream/playlist.m3u8|N\n4|CBS 표준FM|http://aac.cbs.co.kr/cbs981/_definst_/cbs981.stream/playlist.m3u8|N\n5|EBS FM|http://58.229.187.43/fmradiobandiaod/bandiappaac/playlist.m3u8|N\n6|EBS foreign|http://110.10.122.10/iradio/iradiolive_m4a/playlist.m3u8|N\n7|국방TV|http://mediaworks.dema.mil.kr:1935/live_edge/cudo.sdp/playlist.m3u8|Y',
+        'fix_url_list' : '1|CBS 음악FM|http://aac.cbs.co.kr/cbs939/_definst_/cbs939.stream/playlist.m3u8|N\n2|CBS 표준FM|http://aac.cbs.co.kr/cbs981/_definst_/cbs981.stream/playlist.m3u8|N\n3|국방TV|http://mediaworks.dema.mil.kr:1935/live_edge/cudo.sdp/playlist.m3u8|Y',
 
         'use_kbs' : 'False',
         'use_mbc' : 'False',
         'use_sbs' : 'False',
+        'sbs_use_proxy' : 'False',
+        'sbs_proxy_url' : '',
         'use_plex_proxy' : 'False',
     }
     

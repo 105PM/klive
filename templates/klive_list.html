@@ -77,6 +77,7 @@ $("body").on('click', '#web_play_btn', function(e) {
   if (auth_use_apikey) {
     url = url + '&apikey=' + apikey
   } 
+  //console.log(url);
   error_count = 0
   //play_video(video_id, url, true)
 
@@ -180,9 +181,9 @@ function make_list(data) {
     }
     
     tmp = ''
-    //if (data[i].source == 'wavve' || data[i].source == 'tving'){// || data[i].source == 'everyon') {
+    if (data[i].source == 'wavve' || data[i].source == 'tving' || data[i].source == 'mbc' || data[i].source == 'seezn' ){// || data[i].source == 'everyon') {
       tmp += m_button('web_play_btn', 'Play', [{'key':'source', 'value':data[i].source}, {'key':'source_id', 'value':data[i].source_id}, {'key':'title', 'value':data[i].title}]);
-    //}
+    }
     url = ddns + "/"+package_name+"/api/url.m3u8?m=url&s=" + data[i].source + "&i=" + data[i].source_id
     if (auth_use_apikey) {
       url = url + '&apikey=' + apikey

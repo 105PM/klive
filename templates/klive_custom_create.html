@@ -7,16 +7,16 @@
 
   {{ macros.m_hr_head_top() }}
   {{ macros.m_row_start('0') }}
-  {{ macros.m_col(2,  macros.m_strong('Title')) }}
+  {{ macros.m_col(4,  macros.m_strong('Title')) }}
   {{ macros.m_col(2,  macros.m_strong('웨이브')) }}
   {{ macros.m_col(2,  macros.m_strong('티빙')) }}
-  {{ macros.m_col(2,  macros.m_strong('비디오포털')) }}
   {% if arg['show_seezn'] == 'True' %}
   {{ macros.m_col(2,  macros.m_strong('시즌')) }}
   {% else %}
   {{ macros.m_col(2) }}
   {% endif %}
   {{ macros.m_col(2,  macros.m_strong('유저')) }}
+  {{ macros.m_col(2,  macros.m_strong('')) }}
   {{ macros.m_row_end() }}
   {{ macros.m_hr_head_bottom() }}
   <form id="custom_form" name="custom_form">
@@ -96,32 +96,30 @@ $("body").on('click', '#custom_load_btn', function(e){
 });
 
 function make_list(ret, how) {
-  //console.log(ret)
   str = '';
   data = ret.list
-  var site_use = [(ret.setting.use_wavve=='True'), (ret.setting.use_tving=='True'), (ret.setting.use_videoportal=='True'), (ret.setting.use_seezn=='True'), (ret.setting.use_everyon=='True')];
+  var site_use = [(ret.setting.use_wavve=='True'), (ret.setting.use_tving=='True'), (ret.setting.use_seezn=='True')];
   for (i in data) {
-    //str += m_row_start_hover(0);
+    console.log(data[i]);
     str += m_row_start_hover();
+    if (data[i].icon != null)
+      str += m_col(1, '<img src="' + data[i].icon + '" class="img-fluid">');
+    else
+      str += m_col(1, '');
     tmp = '' + (parseInt(i)+1) + ' ' + data[i].name
-    //str += m_col(1, parseInt(i)+1);
-    //tmp = '<br><img src="' + data[i].icon + '" height="30px">'
-    //tmp = data[i].name
-    str += m_col(2, tmp);
-    
+    str += m_col(3, tmp);
+   
     var site = [
       ['wavve', data[i].wavve_name, data[i].wavve_id, data[i].wavve_number],
       ['tving', data[i].tving_name, data[i].tving_id, data[i].tving_number],
-      ['videoportal', data[i].videoportal_name, data[i].videoportal_id, data[i].videoportal_number],
       ['seezn', data[i].seezn_name, data[i].seezn_id, data[i].seezn_number],
       ['user_source', data[i].user_source_name, data[i].user_source_id, data[i].user_source_number]
     ]
 
-
     for (j in site) {
-      if ((site[j][1] != null && site_use[j]) || (j == 4 && data[i].user_source != null)) {
-        source_name = site[j][0]
-        if (j == 4) source_name = data[i].user_source
+      if ((site[j][1] != '' && site[j][1] != null && site_use[j]) || (j == 3 && data[i].user_source != null)) {
+        source_name = site[j][0];
+        if (j == 3) source_name = data[i].user_source
         
         tmp_id = data[i].id + '|' + data[i].name+'|' + data[i].category + '|' + source_name +'|' + site[j][2] + '|' + site[j][1] + '|' + site[j][3]
         //console.log(tmp_id)
