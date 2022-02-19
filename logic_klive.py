@@ -140,9 +140,9 @@ class LogicKlive(object):
             for x in total_channel_list:
                 if (arg['use_wavve'] == 'True' and x.wavve_id != ''):
                     tmp.append(x)
-                if arg['use_tving'] == 'True' and x.tving_id != '' and (arg['tving_include_drm'] == 'True' or (arg['tving_include_drm']=='True' and 'OCN' not in x.tving_name)):
+                elif arg['use_tving'] == 'True' and x.tving_id != '' and (arg['tving_include_drm'] == 'True' or (arg['tving_include_drm']=='True' and 'OCN' not in x.tving_name)):
                     tmp.append(x)
-                if arg['use_seezn'] == 'True' and x.seezn_id != '':
+                elif arg['use_seezn'] == 'True' and x.seezn_id != '':
                     if 'OCN' == x.seezn_name and arg['seezn_include_drm']!='True':
                         continue
                     if x.seezn_name in ['VIKI', '미드나잇 채널', '플레이보이 TV', '허니TV'] and arg['seezn_adult']!='True':
