@@ -56,9 +56,9 @@ class SourceYoutubedl(SourceBase):
                 import framework.common.util as CommonUtil
                 commands = [
                     ['msg', u'잠시만 기다려주세요.'],
-                    ['pip', 'install', '--upgrade', 'pip'],
-                    ['pip', 'install', '--upgrade', 'setuptools'],
-                    ['pip', 'install', '--upgrade', 'yt-dlp'],
+                    #['pip', 'install', '--upgrade', 'pip'],
+                    #['pip', 'install', '--upgrade', 'setuptools'],
+                    ['pip3', 'install', '--upgrade', 'yt-dlp'],
                     ['msg', u'설치가 완료되었습니다.']
                 ]
                 system.SystemLogicCommand.start('설치', commands)
