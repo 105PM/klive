@@ -82,10 +82,10 @@ class LogicKlive(object):
             #    LogicKlive.source_list['everyon'] = SourceEveryon('everyon', None, None, None)
             if ModelSetting.get_bool('use_kbs'):
                 LogicKlive.source_list['kbs'] = SourceKBS('kbs', None, None, None)
-            if ModelSetting.get_bool('use_sbs'):
-                LogicKlive.source_list['sbs'] = SourceSBS('sbs', None, None, None)
             if ModelSetting.get_bool('use_mbc'):
                 LogicKlive.source_list['mbc'] = SourceMBC('mbc', None, None, None)
+            if ModelSetting.get_bool('use_sbs'):
+                LogicKlive.source_list['sbs'] = SourceSBS('sbs', None, None, None)
             if ModelSetting.get_bool('use_youtubedl'):
                 LogicKlive.source_list['youtubedl'] = SourceYoutubedl('youtubedl', None, None, None)
             if ModelSetting.get_bool('use_streamlink'):
@@ -180,7 +180,7 @@ class LogicKlive(object):
                         entity['%s_id' % ch.source] = ch.source_id
                         entity['%s_name' % ch.source] = ch.title
                         entity['category'] = ch.source
-                    if ch.source in ['youtubedl', 'streamlink', 'navertv', 'kakaotv', 'fix_url', 'kbs', 'sbs', 'mbc']:
+                    if ch.source in ['youtubedl', 'streamlink', 'navertv', 'kakaotv', 'fix_url', 'kbs', 'mbc', 'sbs']:
                         entity['user_source'] = ch.source
                         entity['user_source_id'] = ch.source_id
                         entity['user_source_name'] = ch.title
