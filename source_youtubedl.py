@@ -53,7 +53,6 @@ class SourceYoutubedl(SourceBase):
         try:
             def func():
                 import system
-                import framework.common.util as CommonUtil
                 commands = [
                     ['msg', u'잠시만 기다려주세요.'],
                     #['pip', 'install', '--upgrade', 'pip'],
