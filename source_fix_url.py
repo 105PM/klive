@@ -38,7 +38,7 @@ class SourceFixURL(SourceBase):
             tmp = ModelSetting.get('fix_url_list')
             FixURLItem.ch_list = {}
             ret = []
-            for item in tmp.split('\n'):
+            for item in tmp.splitlines():
                 if item.strip() == '':
                     continue
                 tmp2 = item.split('|')

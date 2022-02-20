@@ -75,7 +75,7 @@ class SourceStreamlink(SourceBase):
             tmp = ModelSetting.get('streamlink_list')
             StreamlinkItem.ch_list = {}
             ret = []
-            for item in tmp.split('\n'):
+            for item in tmp.splitlines():
                 if item.strip() == '':
                     continue
                 tmp2 = item.split('|')
