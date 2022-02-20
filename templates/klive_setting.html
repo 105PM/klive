@@ -52,7 +52,8 @@
         <div id="seezn_use_proxy_div" class="collapse">
           {{ macros.setting_input_text('seezn_proxy_url', 'Proxy URL', value=arg['seezn_proxy_url'], desc=['']) }}
         </div>
-        {{ macros.setting_checkbox('seezn_use_redirect', 'redirect 사용', value=arg['seezn_use_redirect'], desc=['On : Redirect', 'Off : return data']) }}
+
+        {{ macros.setting_radio('seezn_play_mode', 'Play Mode', ['Auto', 'Redirect', 'Return'], value=arg['seezn_play_mode'], desc=['Auto : 무료 사용자의 경우 쿠키값을 지우고 이 값 설정', 'Redirect : 유료 채널 시청 권한이 있는 경우 쿠키값을 입력하고 이 값 설정.', 'Return : 테스트용. 일반적으로 설정 불필요']) }}
       </div>
     {{ macros.m_tab_content_end() }} 
 

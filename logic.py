@@ -57,7 +57,8 @@ class Logic(object):
         'seezn_adult': 'False',
         'seezn_use_proxy': 'False',
         'seezn_proxy_url': '',
-        'seezn_use_redirect': 'False',
+        #'seezn_use_redirect': 'False',
+        'seezn_play_mode' : '0',
 
         'use_youtubedl' : 'False',
         'youtubedl_use_proxy' : 'False',

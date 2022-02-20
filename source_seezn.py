@@ -21,6 +21,7 @@ from framework import app, db, scheduler, path_app_root, path_data
 from .plugin import logger, package_name
 from .model import ModelSetting, ModelChannel
 from .source_base import SourceBase
+from support.base import d
 
 #########################################################
 
@@ -57,9 +58,8 @@ class SourceSeezn(SourceBase):
         'Referer': 'https://www.seezntv.com/'
     }
 
-    ch_quality = dict()
-
-
+    ch_more_info = dict()
+    
     @classmethod
     def get_channel_list(cls):
         try:
@@ -76,8 +76,12 @@ class SourceSeezn(SourceBase):
                     #logger.info(item['service_ch_name'])
                     continue
                 # bitrate_info
-                cls.ch_quality[item['ch_no']] = item['bit_rate_info'].split(',')
-
+                cls.ch_more_info[item['ch_no']] = {
+                    'quality':item['bit_rate_info'].split(','), 
+                    'play_mode' : 'return' if item['won_yn'] == 'Y' and item['play_yn'] == 'N' else 'redirect'
+                }
+                # return
+                # tvN Mnet tvN STORY tvN DRAMA tvN SHOW Olive CH.DIA OCN PLAYY 프리미엄 중화TV SBS 골프 바둑TV OGN Tooniverse
                 c = ModelChannel(cls.source_name, item['ch_no'], item['service_ch_name'], item['ch_image_list'], (item['type']!='AUDIO_MUSIC'))
                 # DRM 채널 여부
                 if item['cj_drm_yn'] == 'Y':
@@ -88,8 +92,6 @@ class SourceSeezn(SourceBase):
 
                 c.current = urllib.parse.unquote_plus(item['program_name'])
                 ret.append(c)
-            
-            
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
@@ -108,7 +110,7 @@ class SourceSeezn(SourceBase):
             q = {'FHD': '4000', 'HD': '2000', 'SD': '1000'}
             # 일부 홈쇼핑 채널은 최대 2000이라고 리턴하지만 실제 4000도 재생됨
             # quality = f'{q[quality]}' if q[quality] in cls.ch_quality[source_id] else f'{cls.ch_quality[source_id][0]}'
-            quality = f'{q[quality]}' if len(cls.ch_quality[source_id]) != 1 else f'{cls.ch_quality[source_id][0]}'
+            quality = f'{q[quality]}' if len(cls.ch_more_info[source_id]['quality']) != 1 else f"{cls.ch_more_info[source_id]['quality'][0]}"
             
             # 로그인 정보 없을시 epg_prepaly로, 3~4분 가량 재생됨
             pre = ''
@@ -139,11 +141,16 @@ class SourceSeezn(SourceBase):
                 raise Exception(ch_info['meta'])
             
             #logger.error(url)
-            if ModelSetting.get_bool('seezn_use_redirect') == False:
-                return 'return_after_read', url
+            
+            #if ModelSetting.get_bool('seezn_use_redirect') == False:
+            #    return 'return_after_read', url
+            play_mode = ModelSetting.get('seezn_play_mode')
             if mode == 'web_play':
                 return 'return_after_read', url
-            
+            if play_mode == '2' or (play_mode == '0' and cls.ch_more_info[source_id]['play_mode'] == 'return'):
+                return 'return_after_read', url
+
+            logger.debug(f"redirect : {source_id}")            
             # 해외 서버, 해외 클라이언트에서도 url만 가져오면 redirect로 재생 가능 확인
             return 'redirect', url
 
