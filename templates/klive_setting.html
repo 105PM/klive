@@ -89,7 +89,7 @@
     {{ macros.m_tab_content_start('navertv', false) }}
       {{ macros.setting_checkbox('use_navertv', '네이버 TV', value=arg['use_navertv'], desc=None) }}
       <div id="use_navertv_div" class="collapse">
-        {{ macros.setting_input_textarea('navertv_list', '채널 목록', desc=['형식 : 채널ID|채널이름|채널URL|화질. |화질 생략시 1080', '채널별 구분자 Enter', '채널 URL이 SPORTS_숫자 인 경우 해당 채널을 재생합니다.'], value=arg['navertv_list'], row='20') }}
+        {{ macros.setting_input_textarea('navertv_list', '채널 목록', desc=['형식 : 채널ID|채널이름|채널URL|화질. |화질 생략시 1080', '채널별 구분자 Enter'], value=arg['navertv_list'], row='20') }}
       </div>
     {{ macros.m_tab_content_end() }} 
 
