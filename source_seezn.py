@@ -28,15 +28,18 @@ from support.base import d
 
 class SourceSeezn(SourceBase):
     default_header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36',
         'Host': 'api.seezntv.com',
         'sec-ch-ua': '"Chromium";v="92", " Not A;Brand";v="99", "Google Chrome";v="92"',
         'sec-ch-ua-mobile': '?0',
         'HTTP_CLIENT_IP': 'undefined',
-        'X-APP-VERSION': '92.0.4515.131',
+        'X-APP-VERSION': '98.0.4758.102',
         'X-OS-VERSION': 'NT 10.0',
         'X-OS-TYPE': 'Windows',
         'X-DEVICE-MODEL': 'Chrome',
+        # 2022-03-11 
+        # "error_message": "요청 실패. 문법상 오류가 있어서 서버가 요청사항을 이해하지 못함 (device_type `` 허용하지 않는 DeviceType)",
+        'X-DEVICE-TYPE': 'PCWEB',
         'Accept': 'application/json',
         'Access-Control-Allow-Headers': 'Authentication',
         'Origin': 'https://www.seezntv.com',
@@ -147,6 +150,8 @@ class SourceSeezn(SourceBase):
             play_mode = ModelSetting.get('seezn_play_mode')
             if mode == 'web_play':
                 return 'return_after_read', url
+            logger.debug(cls.ch_more_info[source_id]['play_mode'] )
+            logger.debug(d(cls.ch_more_info[source_id]))
             if play_mode == '2' or (play_mode == '0' and cls.ch_more_info[source_id]['play_mode'] == 'return'):
                 return 'return_after_read', url
 
